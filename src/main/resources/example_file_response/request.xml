@@ -1,0 +1,23 @@
+<Envelope>
+    <Header>
+        <SubscriberInformation>
+            <!--Optional:-->
+            <MessageId>1234563</MessageId>
+            <!--Optional:-->
+            <Login>test</Login>
+        </SubscriberInformation>
+    </Header>
+    <Body>
+        <MsisdnInformation>
+            <!--Optional:-->
+            <request>
+                <Language>
+                    <!--Optional:-->
+                    <Code>1</Code>
+                </Language>
+                <!--Optional:-->
+                <Msisdn>79100000000</Msisdn>
+            </request>
+        </MsisdnInformation>
+    </Body>
+</Envelope>

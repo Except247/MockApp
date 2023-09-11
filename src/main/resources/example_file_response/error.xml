@@ -1,0 +1,21 @@
+<Envelope>
+    <Header>
+        <KeyValue>
+            <Key>example-1</Key>
+            <Value>v1</Value>
+        </KeyValue>
+        <KeyValue>
+            <Key>example-h-2</Key>
+            <Value>v0-1</Value>
+        </KeyValue>
+    </Header>
+    <Body>
+        <MsisdnInformation>
+            <MsisdnInformationResult xmlns:i="http://xxx.org/XMLSchema-test">
+                <ErrorCode>MsisdnNotFound</ErrorCode>
+                <ErrorDescription>Найдите номер</ErrorDescription>
+                <Actions i:nil="true"/>
+            </MsisdnInformationResult>
+        </MsisdnInformation>
+    </Body>
+</Envelope>
