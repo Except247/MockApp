@@ -19,7 +19,7 @@ import java.net.http.HttpResponse;
 public class Be {
 
     private final HttpClient httpClient = HttpClient.newHttpClient();
-    @GetMapping(value = "/external/v1/ert/{msisdn}", produces = {"application/json", "application/xml"})
+    @GetMapping(value = "/external/v1/ert/{msisdn}/resp", produces = {"application/json", "application/xml"})
     public ResponseEntity<?> x1(
             @PathVariable int msisdn,
             @RequestParam(defaultValue = "msisdn") String name,
@@ -27,7 +27,7 @@ public class Be {
             @RequestParam(required = false, defaultValue = "x") String en) throws IOException, InterruptedException {
 
         HttpRequest get = HttpRequest.newBuilder(
-                URI.create("http://localhost:8888/external_x/v1/ert/" + msisdn + "?name=" + name + "&full_ta_resp=" + fullTaResp + "&en=" + en.toLowerCase()))
+                URI.create("http://localhost:8888/external_x/v1/ert/" + msisdn + "/resp?name=" + name + "&full_ta_resp=" + fullTaResp + "&en=" + en.toLowerCase()))
                 .header("Content-Type", "text/xml")
                 .GET().build();
 
