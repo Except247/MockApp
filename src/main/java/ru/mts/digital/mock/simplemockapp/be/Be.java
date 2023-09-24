@@ -19,15 +19,29 @@ import java.net.http.HttpResponse;
 public class Be {
 
     private final HttpClient httpClient = HttpClient.newHttpClient();
+
     @GetMapping(value = "/external/v1/ert/{msisdn}/resp", produces = {"application/json", "application/xml"})
     public ResponseEntity<?> x1(
-            @PathVariable int msisdn,
-            @RequestParam(defaultValue = "msisdn") String name,
-            @RequestParam(required = false) String fullTaResp,
-            @RequestParam(required = false, defaultValue = "x") String en) throws IOException, InterruptedException {
+            @PathVariable String msisdn,
+            @RequestParam(required = false) String name,
+            @RequestParam(name = "full_ta_resp", required = false) String fullTaResp,
+            @RequestParam(required = false) String en) throws IOException, InterruptedException {
+
+        if (name == null) {
+            name = msisdn;
+        }
+
+        String req = "http://localhost:8888/external_x/v1/ert/" + msisdn + "/resp?";
+        req += "name=" + name.replace("+", "%2B");
+        if (fullTaResp != null) {
+            req += "&full_ta_resp=" + fullTaResp;
+        }
+        if (en != null) {
+            req += "&en=" + en;
+        }
 
         HttpRequest get = HttpRequest.newBuilder(
-                URI.create("http://localhost:8888/external_x/v1/ert/" + msisdn + "/resp?name=" + name + "&full_ta_resp=" + fullTaResp + "&en=" + en.toLowerCase()))
+                        URI.create(req))
                 .header("Content-Type", "text/xml")
                 .GET().build();
 
@@ -43,22 +57,21 @@ public class Be {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error");
         }
 
-        if (responseBody.get("en").getAsString().equals(en)) {
+        if (!responseBody.get("full_ta_resp").getAsString().equals(fullTaResp)) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
         }
 
-        if (fullTaResp != null && !responseBody.get("fullTaResp").isJsonNull() && !responseBody.get("fullTaResp").getAsString().equals(fullTaResp)) {
+        if (!responseBody.get("en").getAsString().equals(en)) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
+        }
+
+        if (responseBody.get("reg").getAsInt() == 100) {
+            return ResponseEntity.status(HttpStatus.OK).body(responseBody.toString());
         }
 
         if (!responseBody.get("hasStatus").getAsBoolean()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("");
         }
-
-        if (responseBody.get("code").getAsInt() == 100 && responseBody.get("hasStatus").getAsBoolean()) {
-            return ResponseEntity.status(HttpStatus.OK).body("");
-        }
-
 
         return ResponseEntity.status(HttpStatus.OK).body(responseBody.toString());
     }
